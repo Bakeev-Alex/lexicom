@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  app:
+    image: "${APP_IMAGE:-catalog_app:latest}"
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 80
+    ports:
+      - 9000:80
+    volumes:
+      - ./:/app
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:6.2-alpine
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_POST=6379
+
+    ports:
+      - "6379:6379"
